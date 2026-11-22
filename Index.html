@@ -1,0 +1,2247 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1e3a8a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Saurabh Test App" />
+  <title>Saurabh Test App — TCS iON CBT Mock Test Generator</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter & Noto Sans Devanagari -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Noto Sans Devanagari', 'Inter', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Authentic TCS iON Question Palette Shapes */
+    .tcs-btn-shape {
+      width: 38px;
+      height: 36px;
+      font-weight: 700;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      position: relative;
+      user-select: none;
+    }
+    .tcs-btn-shape:hover {
+      transform: scale(1.06);
+    }
+
+    .status-not-visited {
+      background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+      border: 1px solid #94a3b8;
+      color: #1e293b;
+      border-radius: 4px;
+    }
+
+    .status-not-answered {
+      background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+      color: #ffffff;
+      border: 1px solid #b91c1c;
+      border-radius: 4px 4px 12px 12px;
+      box-shadow: 0 1px 2px rgba(220, 38, 38, 0.35);
+    }
+
+    .status-answered {
+      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+      color: #ffffff;
+      border: 1px solid #15803d;
+      border-radius: 12px 12px 4px 4px;
+      box-shadow: 0 1px 2px rgba(22, 163, 74, 0.35);
+    }
+
+    .status-marked {
+      background: linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%);
+      color: #ffffff;
+      border: 1px solid #5b21b6;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(109, 40, 217, 0.35);
+    }
+
+    .status-answered-marked {
+      background: linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%);
+      color: #ffffff;
+      border: 1px solid #5b21b6;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(109, 40, 217, 0.35);
+    }
+    .status-answered-marked::after {
+      content: '✓';
+      position: absolute;
+      bottom: -3px;
+      right: -3px;
+      width: 15px;
+      height: 15px;
+      background-color: #16a34a;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      border-radius: 50%;
+      border: 1.5px solid #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .active-q-ring {
+      outline: 2.5px solid #0284c7;
+      outline-offset: 2px;
+    }
+
+    /* Sticky Note Card Styling */
+    .sticky-card {
+      position: relative;
+      box-shadow: 0 6px 14px -3px rgba(15, 23, 42, 0.14), 0 2px 6px -2px rgba(15, 23, 42, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .sticky-card:hover {
+      transform: translateY(-4px) rotate(0deg) !important;
+      box-shadow: 0 14px 24px -4px rgba(15, 23, 42, 0.18);
+      z-index: 10;
+    }
+    .sticky-pin {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c);
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.35);
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 9999px;
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #ffffff !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Non-blocking Toast Notification -->
+  <div id="toast-box" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-4 py-2.5 rounded-full shadow-2xl border border-slate-700 text-xs sm:text-sm font-semibold flex items-center gap-2 max-w-[92vw]">
+    <span id="toast-icon">✅</span>
+    <span id="toast-msg" class="truncate">Notification</span>
+  </div>
+
+  <!-- =====================================================================
+       APP SHELL (MOBILE-FIRST HOME, CREATE TEST, SAVED TESTS, ANALYTICS)
+  ====================================================================== -->
+  <div id="app-shell" class="min-h-screen flex flex-col pb-20">
+    <!-- Top App Header -->
+    <header class="bg-gradient-to-r from-[#1e3a8a] via-[#1d4ed8] to-[#1e40af] text-white shadow-lg sticky top-0 z-30">
+      <div class="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-400 text-slate-950 font-extrabold text-lg flex items-center justify-center shadow-inner shrink-0">
+            ST
+          </div>
+          <div>
+            <h1 class="text-base sm:text-lg font-extrabold tracking-tight leading-tight">
+              Welcome to Saurabh Test App
+            </h1>
+            <p class="text-[11px] sm:text-xs text-blue-100">
+              Personal TCS iON CBT Simulator &amp; Smart Revision Studio
+            </p>
+          </div>
+        </div>
+
+        <button id="pwa-install-btn" type="button" onclick="triggerPwaInstall()"
+          class="hidden bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs px-3 py-1.5 rounded-lg shadow transition cursor-pointer shrink-0">
+          📲 Install App
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-5 pt-5 space-y-6">
+
+      <!-- =================================================================
+           VIEW 1: HOME DASHBOARD
+      ================================================================== -->
+      <section id="view-home" class="space-y-6">
+        <!-- Hero Greeting & Quick Action Banner -->
+        <div class="bg-gradient-to-br from-slate-900 via-[#1e293b] to-[#0f172a] text-white rounded-2xl p-5 sm:p-6 shadow-xl border border-slate-700/80 relative overflow-hidden">
+          <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1.5">
+              <span class="inline-flex items-center gap-1.5 bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                🔥 Exam Readiness Mode • Offline PWA Ready
+              </span>
+              <h2 class="text-xl sm:text-2xl font-extrabold">
+                नमस्ते, Saurabh! 👋
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+                किसी भी YouTube क्लास का लिंक पेस्ट करें, अपना परीक्षा पैटर्न (UPSSSC 5-Option या SSC/Other 4-Option) चुनें और तुरंत असली CBT मॉक टेस्ट दें।
+              </p>
+            </div>
+            <button type="button" onclick="navigateAppTab('create')"
+              class="bg-amber-400 hover:bg-amber-300 active:scale-[0.98] text-slate-950 font-extrabold text-sm px-5 py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 shrink-0 cursor-pointer">
+              <span>➕ Create New CBT Test</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3 Live Stats Cards (Persisted in LocalStorage) -->
+        <div class="grid grid-cols-3 gap-3 sm:gap-4">
+          <div class="bg-white rounded-2xl p-3.5 sm:p-5 shadow-xs border border-slate-200 text-center sm:text-left">
+            <div class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase">Tests Created</div>
+            <div id="home-stat-created" class="text-2xl sm:text-3xl font-extrabold text-[#1e3a8a] mt-1">0</div>
+            <div class="text-[10px] sm:text-xs text-slate-400 mt-0.5">Saved on device</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-3.5 sm:p-5 shadow-xs border border-slate-200 text-center sm:text-left">
+            <div class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase">Total Attempts</div>
+            <div id="home-stat-attempts" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mt-1">0</div>
+            <div class="text-[10px] sm:text-xs text-slate-400 mt-0.5">Completed CBTs</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-3.5 sm:p-5 shadow-xs border border-slate-200 text-center sm:text-left">
+            <div class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase">Avg Accuracy</div>
+            <div id="home-stat-accuracy" class="text-2xl sm:text-3xl font-extrabold text-amber-600 mt-1">0%</div>
+            <div class="text-[10px] sm:text-xs text-slate-400 mt-0.5">Correct / Attempted</div>
+          </div>
+        </div>
+
+        <!-- Quick Pattern Launcher Cards -->
+        <div class="space-y-3">
+          <h3 class="text-sm sm:text-base font-extrabold text-slate-800 flex items-center justify-between">
+            <span>⚡ त्वरित परीक्षा पैटर्न चुनें (Select Exam Pattern)</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div onclick="startBlankTestWithPattern('upsssc')"
+              class="bg-white hover:border-blue-500 border-2 border-slate-200 rounded-2xl p-4 shadow-xs cursor-pointer transition group">
+              <div class="flex items-center justify-between">
+                <span class="bg-amber-100 text-amber-900 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full">
+                  5 Options (A–E)
+                </span>
+                <span class="text-blue-600 font-bold text-xs group-hover:translate-x-1 transition">Start →</span>
+              </div>
+              <h4 class="font-extrabold text-base text-slate-900 mt-2">UPSSSC Exam Pattern</h4>
+              <p class="text-xs text-slate-600 mt-1">
+                5वां विकल्प <strong>"E: इनमें से कोई नहीं"</strong> सहित • Marking: <strong>+1.00 / -0.25</strong>
+              </p>
+            </div>
+
+            <div onclick="startBlankTestWithPattern('other')"
+              class="bg-white hover:border-emerald-500 border-2 border-slate-200 rounded-2xl p-4 shadow-xs cursor-pointer transition group">
+              <div class="flex items-center justify-between">
+                <span class="bg-emerald-100 text-emerald-900 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full">
+                  4 Options (A–D)
+                </span>
+                <span class="text-emerald-600 font-bold text-xs group-hover:translate-x-1 transition">Start →</span>
+              </div>
+              <h4 class="font-extrabold text-base text-slate-900 mt-2">SSC / Railway / Banking Pattern</h4>
+              <p class="text-xs text-slate-600 mt-1">
+                मानक 4-विकल्प पैटर्न • कस्टम नेगेटिव मार्किंग (<strong>+1 / -0.25 या -0.33</strong>)
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Saved Tests Preview -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-extrabold text-sm sm:text-base text-slate-900">📚 हाल ही में बनाए गए टेस्ट (Recent Tests)</h3>
+            <button type="button" onclick="navigateAppTab('saved')" class="text-xs font-bold text-blue-700 hover:underline cursor-pointer">
+              View All →
+            </button>
+          </div>
+          <div id="home-recent-tests-list" class="space-y-2.5">
+            <!-- Populated dynamically from LocalStorage -->
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           VIEW 2: CREATE TEST ENGINE (BLANK SLATE — NO HARDCODED LINKS)
+      ================================================================== -->
+      <section id="view-create" class="hidden space-y-5">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-slate-900 text-white px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="font-extrabold text-sm sm:text-base">🎬 नया मॉक टेस्ट बनाएं (YouTube Link to CBT Engine)</h2>
+              <p class="text-[11px] text-slate-300">कोई भी लिंक पेस्ट करें, परीक्षा पैटर्न चुनें और प्रश्नों को इम्पोर्ट या पार्स करें</p>
+            </div>
+            <button type="button" onclick="resetCreateForm()" class="text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded border border-slate-600 cursor-pointer">
+              🧹 Clear Form
+            </button>
+          </div>
+
+          <div class="p-4 sm:p-6 space-y-5">
+            <!-- Step 1: Blank YouTube Link Input + Live Preview -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+              <div class="lg:col-span-7 space-y-3">
+                <div>
+                  <label for="yt-url-input" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
+                    1. YouTube Video Link पेस्ट करें (Optional / Source Tracking):
+                  </label>
+                  <div class="flex gap-2">
+                    <div class="relative flex-1">
+                      <input id="yt-url-input" type="url" value=""
+                        placeholder="यहाँ कोई भी YouTube लिंक पेस्ट करें (e.g. https://youtu.be/...)"
+                        class="w-full pl-3.5 pr-9 py-2.5 text-sm border-2 border-slate-300 focus:border-blue-600 rounded-xl focus:outline-none bg-slate-50 focus:bg-white transition" />
+                      <button type="button" onclick="clearUrlInput()" title="Clear Link"
+                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 font-bold text-lg cursor-pointer">
+                        &times;
+                      </button>
+                    </div>
+                    <button type="button" onclick="pasteLinkFromClipboard()"
+                      class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs px-3.5 py-2.5 rounded-xl shrink-0 cursor-pointer">
+                      📋 Paste
+                    </button>
+                  </div>
+                  <p id="yt-id-status" class="text-[11px] text-slate-500 mt-1">
+                    ℹ️ लिंक पेस्ट करते ही वीडियो थंबनेल और ID अपने आप पहचान ली जाएगी।
+                  </p>
+                </div>
+
+                <div>
+                  <label for="test-title-input" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
+                    2. टेस्ट का नाम (Test Title):
+                  </label>
+                  <input id="test-title-input" type="text" value=""
+                    placeholder="उदाहरण: UPSSSC Junior Assistant GK & Computer Mock Test"
+                    class="w-full px-3.5 py-2 text-sm border border-slate-300 focus:border-blue-600 rounded-xl focus:outline-none font-semibold" />
+                </div>
+              </div>
+
+              <!-- Dynamic Thumbnail Preview Box -->
+              <div class="lg:col-span-5 bg-slate-900 rounded-xl overflow-hidden border border-slate-700 shadow-sm">
+                <div class="relative aspect-video bg-slate-800 flex items-center justify-center">
+                  <img id="yt-preview-thumb"
+                    src="https://placehold.co/640x360/1e293b/94a3b8?text=Paste+YouTube+Link+Above"
+                    onerror="this.onerror=null; this.src='https://placehold.co/640x360/1e293b/94a3b8?text=Video+Preview';"
+                    alt="YouTube Thumbnail"
+                    class="w-full h-full object-cover" />
+                  <span id="yt-preview-badge" class="absolute top-2 right-2 bg-black/75 text-slate-200 font-mono text-[10px] px-2 py-0.5 rounded">
+                    NO VIDEO LINK
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Exam Pattern Selector (5-Option UPSSSC vs 4-Option Other) -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-xs sm:text-sm font-extrabold text-slate-800">
+                  3. परीक्षा पैटर्न और मार्किंग चुनें (Exam Pattern &amp; Options):
+                </span>
+                <span id="pattern-active-pill" class="text-[11px] font-bold bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full border border-amber-300">
+                  UPSSSC Mode: 5 Options (A–E)
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-blue-600 bg-blue-50/60 cursor-pointer" id="radio-card-upsssc">
+                  <input type="radio" name="exam-pattern" value="upsssc" checked onchange="handlePatternChange('upsssc')" class="w-4 h-4 accent-blue-700" />
+                  <div>
+                    <div class="text-xs sm:text-sm font-extrabold text-slate-900">UPSSSC Pattern (5 Options)</div>
+                    <div class="text-[11px] text-slate-600">विकल्प E: "इनमें से कोई नहीं" अनिवार्य (+1 / -0.25)</div>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 bg-white cursor-pointer" id="radio-card-other">
+                  <input type="radio" name="exam-pattern" value="other" onchange="handlePatternChange('other')" class="w-4 h-4 accent-emerald-600" />
+                  <div>
+                    <div class="text-xs sm:text-sm font-extrabold text-slate-900">Other Exams: SSC / Railway (4 Options)</div>
+                    <div class="text-[11px] text-slate-600">मानक 4 विकल्प (A, B, C, D) पैटर्न</div>
+                  </div>
+                </label>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2.5 pt-1">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-1">समय (Minutes):</label>
+                  <input id="duration-input" type="number" min="1" max="180" value="20"
+                    class="w-full px-3 py-1.5 text-xs sm:text-sm border border-slate-300 rounded-lg font-bold bg-white" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-1">सही अंक (+):</label>
+                  <input id="pos-mark-input" type="number" step="0.25" value="1"
+                    class="w-full px-3 py-1.5 text-xs sm:text-sm border border-slate-300 rounded-lg font-bold text-emerald-700 bg-white" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-1">नेगेटिव (-):</label>
+                  <select id="neg-mark-input" class="w-full px-2.5 py-1.5 text-xs sm:text-sm border border-slate-300 rounded-lg font-bold text-rose-700 bg-white">
+                    <option value="0.25" selected>-0.25 (1/4th)</option>
+                    <option value="0.33">-0.33 (1/3rd)</option>
+                    <option value="0.50">-0.50 (1/2)</option>
+                    <option value="0">0 (No Negative)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: 3 Ways to Add/Extract Questions -->
+            <div class="border border-slate-300 rounded-xl overflow-hidden">
+              <div class="bg-slate-100 p-2 border-b border-slate-300 flex flex-wrap gap-1.5 text-xs font-bold">
+                <button type="button" onclick="switchBuilderTab('json')" id="btab-json"
+                  class="px-3 py-1.5 rounded-lg bg-[#1e3a8a] text-white cursor-pointer transition">
+                  ✨ 1. Gemini Prompt + Import JSON
+                </button>
+                <button type="button" onclick="switchBuilderTab('transcript')" id="btab-transcript"
+                  class="px-3 py-1.5 rounded-lg bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 cursor-pointer transition">
+                  📝 2. Transcript / Notes Parser
+                </button>
+                <button type="button" onclick="switchBuilderTab('manual')" id="btab-manual"
+                  class="px-3 py-1.5 rounded-lg bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 cursor-pointer transition">
+                  ✍️ 3. Manual Quick Builder
+                </button>
+              </div>
+
+              <!-- Builder Tab 1: 1-Click Master Prompt + JSON Paste -->
+              <div id="bpanel-json" class="p-4 space-y-3 bg-white">
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                  <div class="text-xs text-amber-950">
+                    <strong>कैसे उपयोग करें:</strong> बटन दबाकर मास्टर प्रॉम्प्ट कॉपी करें → Gemini में अपने वीडियो लिंक के साथ पेस्ट करें → मिले हुए JSON को नीचे बॉक्स में डालें।
+                  </div>
+                  <button type="button" onclick="copyDynamicMasterPrompt()"
+                    class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs px-3.5 py-2 rounded-lg shadow-xs shrink-0 cursor-pointer">
+                    📋 Copy Master Prompt
+                  </button>
+                </div>
+
+                <div>
+                  <label for="json-paste-area" class="block text-xs font-bold text-slate-700 mb-1">
+                    JSON आउटपुट यहाँ पेस्ट करें (Paste JSON Array Here):
+                  </label>
+                  <textarea id="json-paste-area" rows="5"
+                    placeholder='[{"section":"GK","question":"...","options":["A","B","C","D"],"correct":0,"coreExplanation":"...","examFacts":"...","relatedQuestions":"...","stickyNote":"..."}]'
+                    class="w-full p-3 text-xs font-mono border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"></textarea>
+                </div>
+
+                <button type="button" onclick="importJsonToDraft()"
+                  class="bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-lg shadow cursor-pointer">
+                  📥 Load Questions from JSON
+                </button>
+              </div>
+
+              <!-- Builder Tab 2: Smart Transcript / Notes Parser -->
+              <div id="bpanel-transcript" class="hidden p-4 space-y-3 bg-white">
+                <p class="text-xs text-slate-600">
+                  वीडियो की ट्रांसक्रिप्ट, MCQ या वन-लाइनर नोट्स पेस्ट करें (जैसे: <code>विषय : सही तथ्य</code> या <code>Q1. प्रश्न... A) ... B) ... Ans: B</code>)। ऐप चुने गए परीक्षा पैटर्न के अनुसार संतुलित विकल्प तैयार कर देगा।
+                </p>
+                <textarea id="transcript-paste-area" rows="5"
+                  placeholder="यहाँ वीडियो की transcript या वन-लाइनर नोट्स पेस्ट करें..."
+                  class="w-full p-3 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-blue-600"></textarea>
+                <button type="button" onclick="parseNotesToDraft()"
+                  class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-lg shadow cursor-pointer">
+                  ⚡ Auto-Generate MCQs from Text
+                </button>
+              </div>
+
+              <!-- Builder Tab 3: Manual Quick Builder -->
+              <div id="bpanel-manual" class="hidden p-4 space-y-3 bg-white">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <input id="man-section" type="text" placeholder="Section Name (e.g. UP GK / Reasoning)"
+                    class="px-3 py-2 text-xs border border-slate-300 rounded-lg font-semibold" />
+                  <select id="man-correct" class="px-3 py-2 text-xs border border-slate-300 rounded-lg font-bold text-emerald-700 bg-white">
+                    <option value="0">सही उत्तर: Option A</option>
+                    <option value="1">सही उत्तर: Option B</option>
+                    <option value="2">सही उत्तर: Option C</option>
+                    <option value="3">सही उत्तर: Option D</option>
+                    <option value="4" id="man-opt-e-select">सही उत्तर: Option E (इनमें से कोई नहीं)</option>
+                  </select>
+                </div>
+
+                <textarea id="man-question" rows="2" placeholder="यहाँ प्रश्न लिखें..."
+                  class="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg"></textarea>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input id="man-opt-0" type="text" placeholder="Option A" class="px-3 py-1.5 text-xs border border-slate-300 rounded-lg" />
+                  <input id="man-opt-1" type="text" placeholder="Option B" class="px-3 py-1.5 text-xs border border-slate-300 rounded-lg" />
+                  <input id="man-opt-2" type="text" placeholder="Option C" class="px-3 py-1.5 text-xs border border-slate-300 rounded-lg" />
+                  <input id="man-opt-3" type="text" placeholder="Option D" class="px-3 py-1.5 text-xs border border-slate-300 rounded-lg" />
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input id="man-exp" type="text" placeholder="विस्तृत व्याख्या (Detailed Explanation)" class="px-3 py-1.5 text-xs border border-slate-300 rounded-lg" />
+                  <input id="man-related" type="text" placeholder="आगे-पीछे के संभावित प्रश्न (Related Exam Qs)" class="px-3 py-1.5 text-xs border border-slate-300 rounded-lg" />
+                </div>
+
+                <input id="man-sticky" type="text" placeholder="Quick Revision Sticky Note (1-Liner Fact)"
+                  class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg" />
+
+                <button type="button" onclick="addManualQuestionToDraft()"
+                  class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-lg shadow cursor-pointer">
+                  + Add Question to Test
+                </button>
+              </div>
+            </div>
+
+            <!-- Draft Questions Preview & Launch Bar -->
+            <div class="bg-blue-50/80 border-2 border-blue-200 rounded-2xl p-4 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h3 class="font-extrabold text-sm text-blue-950">
+                    📋 तैयार प्रश्न सूची (Draft Questions): <span id="draft-count-badge" class="bg-blue-700 text-white px-2 py-0.5 rounded-full text-xs">0</span>
+                  </h3>
+                  <p class="text-[11px] text-slate-600">टेस्ट सेव और शुरू करने के लिए कम से कम 1 प्रश्न जोड़ें।</p>
+                </div>
+                <div class="flex gap-2">
+                  <button type="button" onclick="clearDraftQuestions()" class="text-xs text-rose-600 font-bold hover:underline cursor-pointer">
+                    Clear All
+                  </button>
+                </div>
+              </div>
+
+              <div id="draft-questions-list" class="max-h-48 overflow-y-auto space-y-1.5">
+                <div class="text-xs text-slate-500 italic py-3 text-center">
+                  अभी कोई प्रश्न नहीं जोड़ा गया है। ऊपर दिए गए किसी भी विकल्प से प्रश्न जोड़ें।
+                </div>
+              </div>
+
+              <div class="pt-2 flex flex-col sm:flex-row gap-2.5">
+                <button type="button" onclick="saveAndLaunchDraftTest()"
+                  class="flex-1 bg-gradient-to-r from-[#1e3a8a] to-[#0284c7] hover:brightness-110 text-white font-extrabold text-sm py-3 px-5 rounded-xl shadow-md transition cursor-pointer">
+                  🚀 Save &amp; Start TCS iON CBT Test
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           VIEW 3: SAVED TESTS LIBRARY
+      ================================================================== -->
+      <section id="view-saved" class="hidden space-y-4">
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200 flex items-center justify-between">
+          <div>
+            <h2 class="font-extrabold text-base sm:text-lg text-slate-900">📂 आपके सेव किए गए मॉक टेस्ट (Saved Tests)</h2>
+            <p class="text-xs text-slate-500">आपके फ़ोन में स्थायी रूप से सेव टेस्ट — कभी भी री-अटेम्प्ट करें या डिलीट करें।</p>
+          </div>
+          <button type="button" onclick="navigateAppTab('create')" class="bg-[#1e3a8a] text-white text-xs font-bold px-3.5 py-2 rounded-lg cursor-pointer">
+            + New Test
+          </button>
+        </div>
+
+        <div id="saved-tests-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Populated from LocalStorage -->
+        </div>
+      </section>
+
+      <!-- =================================================================
+           VIEW 4: PERFORMANCE ANALYTICS & ATTEMPT HISTORY
+      ================================================================== -->
+      <section id="view-analytics" class="hidden space-y-4">
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="font-extrabold text-base sm:text-lg text-slate-900">📈 प्रदर्शन विश्लेषण (Saurabh's Attempt History)</h2>
+            <p class="text-xs text-slate-500">सभी दिए गए टेस्ट का स्कोर, सटीकता (Accuracy %) और लिया गया समय।</p>
+          </div>
+          <button type="button" onclick="clearAttemptHistory()" class="text-xs text-rose-600 font-bold border border-rose-200 bg-rose-50 px-3 py-1.5 rounded-lg cursor-pointer">
+            🗑️ Clear History
+          </button>
+        </div>
+
+        <div id="analytics-history-list" class="space-y-3">
+          <!-- Populated from LocalStorage -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Mobile-First Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-300 shadow-2xl">
+      <div class="max-w-5xl mx-auto grid grid-cols-4 h-16">
+        <button type="button" onclick="navigateAppTab('home')" id="nav-btn-home"
+          class="flex flex-col items-center justify-center gap-0.5 text-[#1e3a8a] font-extrabold text-[11px] border-t-2 border-[#1e3a8a] cursor-pointer">
+          <span class="text-lg">🏠</span>
+          <span>Home</span>
+        </button>
+        <button type="button" onclick="navigateAppTab('create')" id="nav-btn-create"
+          class="flex flex-col items-center justify-center gap-0.5 text-slate-500 font-semibold text-[11px] border-t-2 border-transparent cursor-pointer">
+          <span class="text-lg">➕</span>
+          <span>Create Test</span>
+        </button>
+        <button type="button" onclick="navigateAppTab('saved')" id="nav-btn-saved"
+          class="flex flex-col items-center justify-center gap-0.5 text-slate-500 font-semibold text-[11px] border-t-2 border-transparent cursor-pointer">
+          <span class="text-lg">📚</span>
+          <span>Saved Tests</span>
+        </button>
+        <button type="button" onclick="navigateAppTab('analytics')" id="nav-btn-analytics"
+          class="flex flex-col items-center justify-center gap-0.5 text-slate-500 font-semibold text-[11px] border-t-2 border-transparent cursor-pointer">
+          <span class="text-lg">📊</span>
+          <span>Analytics</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- =====================================================================
+       SCREEN 2: TCS iON CBT INSTRUCTIONS SCREEN
+  ====================================================================== -->
+  <div id="instruction-screen" class="hidden min-h-screen flex-col bg-slate-100">
+    <header class="bg-[#2c5282] text-white shadow-md border-b-4 border-amber-400">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-3">
+          <div class="bg-white text-[#1e3a8a] font-extrabold px-2.5 py-1 rounded text-sm">
+            TCS <span class="text-amber-600">iON</span> CBT
+          </div>
+          <div>
+            <h1 id="inst-title" class="text-sm sm:text-lg font-bold leading-snug">Mock Test Instructions</h1>
+            <p id="inst-subtitle" class="text-xs text-blue-100">Saurabh Test App • Official CBT Simulator</p>
+          </div>
+        </div>
+        <button type="button" onclick="exitToAppShell()" class="text-xs bg-blue-900/70 hover:bg-blue-900 px-3 py-1.5 rounded border border-blue-400/30 font-semibold cursor-pointer">
+          ← Home
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-5">
+      <div class="bg-white rounded-xl shadow border border-slate-300 overflow-hidden">
+        <div class="bg-[#3b82f6] text-white px-4 py-2.5 text-sm font-bold">
+          सामान्य निर्देश एवं अंकन योजना (General Instructions &amp; Marking Scheme)
+        </div>
+
+        <div class="p-4 sm:p-6 space-y-5 text-xs sm:text-sm text-slate-800">
+          <div id="inst-pattern-banner" class="bg-amber-50 border-l-4 border-amber-500 p-3.5 rounded-r">
+            <!-- Pattern details -->
+          </div>
+
+          <div class="overflow-x-auto border border-slate-300 rounded-lg">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-200 font-bold border-b border-slate-300">
+                  <th class="p-2.5 border-r border-slate-300">Section</th>
+                  <th class="p-2.5 border-r border-slate-300 text-center">Questions</th>
+                  <th class="p-2.5 border-r border-slate-300 text-center">Max Marks</th>
+                  <th class="p-2.5 text-center">Negative Marking</th>
+                </tr>
+              </thead>
+              <tbody id="inst-table-body" class="divide-y divide-slate-200"></tbody>
+            </table>
+          </div>
+
+          <!-- Palette Color Legend -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-slate-50 p-3.5 rounded-lg border border-slate-200">
+            <div class="flex items-center gap-2.5">
+              <span class="tcs-btn-shape status-not-visited shrink-0">1</span>
+              <span><strong>Not Visited:</strong> प्रश्न अभी तक देखा नहीं गया।</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <span class="tcs-btn-shape status-not-answered shrink-0">2</span>
+              <span><strong>Not Answered:</strong> प्रश्न का उत्तर नहीं दिया गया।</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <span class="tcs-btn-shape status-answered shrink-0">3</span>
+              <span><strong>Answered:</strong> प्रश्न का उत्तर सहेजा गया है।</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <span class="tcs-btn-shape status-marked shrink-0">4</span>
+              <span><strong>Marked for Review:</strong> समीक्षा हेतु चिह्नित।</span>
+            </div>
+          </div>
+
+          <label class="flex items-start gap-3 cursor-pointer pt-2 border-t border-slate-200">
+            <input id="inst-declare-cb" type="checkbox" class="mt-1 w-4 h-4 accent-[#2c5282]" />
+            <span class="font-medium text-slate-800">
+              मैंने सभी निर्देशों को ध्यानपूर्वक पढ़ लिया है। मैं परीक्षा शुरू करने के लिए तैयार हूँ।
+            </span>
+          </label>
+          <p id="inst-warn-msg" class="hidden text-xs font-bold text-rose-600">
+            ⚠️ कृपया आगे बढ़ने से पहले चेकबॉक्स पर टिक करें।
+          </p>
+
+          <div class="flex justify-end">
+            <button type="button" onclick="confirmBeginCbt()"
+              class="bg-[#0284c7] hover:bg-[#0369a1] text-white font-extrabold px-6 py-2.5 rounded-lg shadow cursor-pointer">
+              I am ready to begin (परीक्षा शुरू करें) →
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- =====================================================================
+       SCREEN 3: LIVE TCS iON CBT EXAM INTERFACE
+  ====================================================================== -->
+  <div id="exam-screen" class="hidden min-h-screen flex-col bg-[#e2e8f0]">
+    <!-- Top Dark Navy Exam Banner -->
+    <header class="bg-[#1e293b] text-white px-3 sm:px-5 py-2 flex items-center justify-between gap-2 shadow">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="bg-amber-500 text-slate-950 font-extrabold text-xs px-2 py-0.5 rounded shrink-0">TCS iON</span>
+        <span id="cbt-exam-title" class="font-bold text-xs sm:text-sm truncate">Saurabh Test App CBT</span>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="toggleMobilePaletteDrawer()"
+          class="lg:hidden bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-2.5 py-1 rounded cursor-pointer">
+          🔢 Palette
+        </button>
+        <span class="text-xs text-slate-300 hidden sm:inline">
+          Marking: <strong id="cbt-pos-badge" class="text-emerald-400">+1</strong> / <strong id="cbt-neg-badge" class="text-rose-400">-0.25</strong>
+        </span>
+      </div>
+    </header>
+
+    <!-- Section Tabs + Live Countdown Timer -->
+    <div class="bg-[#2c5282] text-white px-2 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-2 border-b border-blue-900">
+      <div id="cbt-section-tabs" class="flex items-center gap-1.5 overflow-x-auto"></div>
+
+      <div class="flex items-center gap-2 ml-auto">
+        <span class="text-xs font-semibold text-blue-100">Time Left:</span>
+        <div id="cbt-timer-box" class="bg-slate-900 text-emerald-400 font-mono font-extrabold text-sm sm:text-base px-3 py-1 rounded border border-slate-600 tracking-wider">
+          20:00
+        </div>
+      </div>
+    </div>
+
+    <!-- Main CBT Workspace -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+      <!-- Question Area -->
+      <div class="flex-1 flex flex-col bg-white border-r border-slate-300 min-h-[65vh]">
+        <div class="bg-slate-100 px-4 py-2.5 border-b border-slate-300 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span id="cbt-q-num" class="font-extrabold text-sm sm:text-base text-[#1e3a8a]">Question No. 1</span>
+            <span id="cbt-q-sec" class="text-[11px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-bold">Section</span>
+          </div>
+          <div class="text-xs font-semibold flex items-center gap-2">
+            <span id="cbt-q-pos" class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded">+1.00</span>
+            <span id="cbt-q-neg" class="bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded">-0.25</span>
+          </div>
+        </div>
+
+        <div class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
+          <div id="cbt-q-text" class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200"></div>
+          <div id="cbt-options-box" class="space-y-2.5"></div>
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="bg-slate-100 border-t border-slate-300 px-3 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="markForReviewAndNext()"
+              class="bg-[#7c3aed] hover:bg-[#6d28d9] text-white text-xs sm:text-sm font-bold px-3.5 py-2 rounded shadow-sm cursor-pointer">
+              Mark for Review &amp; Next
+            </button>
+            <button type="button" onclick="clearResponse()"
+              class="bg-white hover:bg-slate-200 text-slate-800 border border-slate-400 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded shadow-sm cursor-pointer">
+              Clear Response
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2 ml-auto">
+            <button id="cbt-prev-btn" type="button" onclick="prevQuestion()"
+              class="bg-slate-600 hover:bg-slate-700 disabled:opacity-40 text-white text-xs sm:text-sm font-bold px-3.5 py-2 rounded cursor-pointer">
+              &laquo; Prev
+            </button>
+            <button type="button" onclick="saveAndNext()"
+              class="bg-[#16a34a] hover:bg-[#15803d] text-white text-xs sm:text-sm font-bold px-5 py-2 rounded shadow cursor-pointer">
+              Save &amp; Next &raquo;
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Sidebar / Mobile Slide-Over Question Palette -->
+      <aside id="cbt-palette-sidebar"
+        class="hidden lg:flex fixed lg:static inset-y-0 right-0 z-40 w-[310px] xl:w-[350px] bg-[#e0f2fe] flex-col justify-between border-l border-slate-300 shadow-2xl lg:shadow-none">
+        <div>
+          <div class="bg-white px-3.5 py-2.5 border-b border-slate-300 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-full bg-[#1e3a8a] text-white font-bold flex items-center justify-center text-xs">S</div>
+              <div>
+                <div class="font-bold text-sm text-slate-900">Saurabh</div>
+                <div class="text-[11px] text-slate-500">Saurabh Test App CBT</div>
+              </div>
+            </div>
+            <button type="button" onclick="toggleMobilePaletteDrawer()" class="lg:hidden text-slate-600 font-extrabold text-xl px-2 cursor-pointer">&times;</button>
+          </div>
+
+          <!-- Status Counters -->
+          <div class="bg-white p-3 border-b border-slate-300 grid grid-cols-2 gap-2 text-[11px] font-semibold text-slate-700">
+            <div class="flex items-center gap-2">
+              <span id="pal-cnt-ans" class="tcs-btn-shape status-answered !w-7 !h-6 !text-xs">0</span>
+              <span>Answered</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="pal-cnt-notans" class="tcs-btn-shape status-not-answered !w-7 !h-6 !text-xs">0</span>
+              <span>Not Answered</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="pal-cnt-notvis" class="tcs-btn-shape status-not-visited !w-7 !h-6 !text-xs">0</span>
+              <span>Not Visited</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="pal-cnt-mrk" class="tcs-btn-shape status-marked !w-7 !h-6 !text-xs">0</span>
+              <span>Marked</span>
+            </div>
+            <div class="flex items-center gap-2 col-span-2">
+              <span id="pal-cnt-ansmrk" class="tcs-btn-shape status-answered-marked !w-7 !h-6 !text-xs">0</span>
+              <span>Answered &amp; Marked for Review</span>
+            </div>
+          </div>
+
+          <div id="pal-sec-header" class="bg-[#2c5282] text-white px-3.5 py-2 text-xs font-bold">
+            Question Palette
+          </div>
+
+          <div class="p-3.5 max-h-[280px] overflow-y-auto">
+            <div id="cbt-palette-grid" class="grid grid-cols-5 gap-2.5"></div>
+          </div>
+        </div>
+
+        <div class="p-3.5 bg-white border-t border-slate-300">
+          <button type="button" onclick="openSubmitModal()"
+            class="w-full bg-[#0284c7] hover:bg-[#0369a1] text-white font-extrabold py-2.5 px-4 rounded shadow text-sm cursor-pointer">
+            SUBMIT TEST (सबमिट करें)
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       SCREEN 4: TEXTBOOK-STYLE RESULT, SOLUTIONS & STICKY NOTES WALL
+  ====================================================================== -->
+  <div id="result-screen" class="hidden min-h-screen flex-col bg-slate-100">
+    <header class="bg-[#1e3a8a] text-white shadow-md border-b-4 border-amber-400 no-print">
+      <div class="max-w-6xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span class="bg-amber-400 text-slate-950 font-extrabold text-[11px] px-2 py-0.5 rounded">SAURABH TEST APP • REPORT CARD</span>
+          <h1 id="res-title" class="text-base sm:text-xl font-extrabold mt-0.5">Test Performance &amp; Textbook Solutions</h1>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="#sticky-wall-section" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg shadow">
+            📌 Sticky Wall
+          </a>
+          <button type="button" onclick="window.print()" class="bg-blue-800 hover:bg-blue-700 text-white border border-blue-400/40 font-bold text-xs px-3 py-2 rounded-lg cursor-pointer">
+            🖨️ Print / PDF
+          </button>
+          <button type="button" onclick="retakeActiveTest()" class="bg-white hover:bg-slate-100 text-[#1e3a8a] font-bold text-xs px-3 py-2 rounded-lg shadow cursor-pointer">
+            🔄 Retake
+          </button>
+          <button type="button" onclick="exitToAppShell()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-2 rounded-lg shadow cursor-pointer">
+            🏠 Home
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-6xl w-full mx-auto px-3 sm:px-5 py-6 space-y-6">
+      <!-- Top KPI Score Cards -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 border-t-4 border-t-blue-600">
+          <div class="text-xs font-bold text-slate-500 uppercase">कुल स्कोर (Score)</div>
+          <div class="mt-1 flex items-baseline gap-1.5">
+            <span id="res-score" class="text-2xl sm:text-3xl font-extrabold text-blue-700">0.00</span>
+            <span id="res-max-score" class="text-xs sm:text-sm font-bold text-slate-400">/ 0.00</span>
+          </div>
+          <div id="res-score-detail" class="text-[11px] text-slate-600 mt-1">+0.00 | -0.00</div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 border-t-4 border-t-emerald-600">
+          <div class="text-xs font-bold text-slate-500 uppercase">सटीकता (Accuracy)</div>
+          <div id="res-accuracy" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mt-1">0.0%</div>
+          <div class="text-[11px] text-slate-600 mt-1">Correct / Attempted × 100</div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 border-t-4 border-t-amber-500">
+          <div class="text-xs font-bold text-slate-500 uppercase">कुल समय (Time Taken)</div>
+          <div class="mt-1 flex items-baseline gap-1.5">
+            <span id="res-time" class="text-2xl sm:text-3xl font-extrabold text-amber-600">00:00</span>
+            <span id="res-total-time" class="text-xs font-bold text-slate-400">/ 20:00</span>
+          </div>
+          <div id="res-avg-time" class="text-[11px] text-slate-600 mt-1">Avg: 0s / Q</div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 border-t-4 border-t-purple-600">
+          <div class="text-xs font-bold text-slate-500 uppercase">प्रयास (Attempts)</div>
+          <div class="mt-2 grid grid-cols-3 gap-1 text-center">
+            <div class="bg-emerald-50 rounded p-1">
+              <div id="res-correct" class="text-base font-extrabold text-emerald-700">0</div>
+              <div class="text-[10px] font-bold text-emerald-800">सही</div>
+            </div>
+            <div class="bg-rose-50 rounded p-1">
+              <div id="res-wrong" class="text-base font-extrabold text-rose-700">0</div>
+              <div class="text-[10px] font-bold text-rose-800">गलत</div>
+            </div>
+            <div class="bg-slate-100 rounded p-1">
+              <div id="res-skip" class="text-base font-extrabold text-slate-700">0</div>
+              <div class="text-[10px] font-bold text-slate-600">छोड़े</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section-Wise Performance Table -->
+      <section class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+        <div class="bg-slate-800 text-white px-4 py-3 font-bold text-sm">
+          📊 सेक्शन-वार प्रदर्शन (Section-Wise Breakdown)
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                <th class="p-3">Section</th>
+                <th class="p-3 text-center">Total</th>
+                <th class="p-3 text-center">Attempted</th>
+                <th class="p-3 text-center text-emerald-700">Correct</th>
+                <th class="p-3 text-center text-rose-700">Wrong</th>
+                <th class="p-3 text-center">Accuracy</th>
+                <th class="p-3 text-center text-blue-800">Score</th>
+              </tr>
+            </thead>
+            <tbody id="res-section-tbody" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Textbook-Style Detailed Solutions -->
+      <section class="space-y-4">
+        <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="font-extrabold text-base sm:text-lg text-slate-900">📖 Textbook-Style Detailed Solutions</h2>
+            <p class="text-xs text-slate-500">विस्तृत व्याख्या, Exam Key Points, आगे-पीछे के संभावित प्रश्न और Sticky Notes</p>
+          </div>
+          <div class="flex flex-wrap gap-1.5 no-print" id="sol-filter-bar">
+            <button type="button" onclick="filterSolutions('all')" data-filter="all" class="sol-fbtn bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">All</button>
+            <button type="button" onclick="filterSolutions('correct')" data-filter="correct" class="sol-fbtn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">✅ Correct</button>
+            <button type="button" onclick="filterSolutions('incorrect')" data-filter="incorrect" class="sol-fbtn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">❌ Incorrect</button>
+            <button type="button" onclick="filterSolutions('unattempted')" data-filter="unattempted" class="sol-fbtn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">⚪ Unattempted</button>
+          </div>
+        </div>
+
+        <div id="res-solutions-list" class="space-y-4"></div>
+      </section>
+
+      <!-- Quick Revision Sticky Notes Wall -->
+      <section id="sticky-wall-section" class="bg-gradient-to-br from-amber-50 via-orange-50/70 to-yellow-50 rounded-2xl p-5 sm:p-7 border-2 border-amber-200 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5 border-b border-amber-200 pb-3">
+          <div>
+            <span class="bg-amber-500 text-white text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full">
+              Saurabh's Last-Minute Revision Wall
+            </span>
+            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 mt-1">
+              📌 Quick Revision Sticky Notes Wall
+            </h2>
+          </div>
+          <button type="button" onclick="copyAllStickyNotes()" class="no-print bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow cursor-pointer">
+            📋 Copy All Sticky Notes
+          </button>
+        </div>
+
+        <div id="res-sticky-wall" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- =====================================================================
+       SUBMIT CONFIRMATION MODAL
+  ====================================================================== -->
+  <div id="submit-modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-300 overflow-hidden">
+      <div class="bg-[#2c5282] text-white px-5 py-3.5 flex items-center justify-between">
+        <h3 class="font-bold text-base">परीक्षा सबमिट सारांश (Submission Summary)</h3>
+        <button type="button" onclick="closeSubmitModal()" class="text-white/80 hover:text-white text-xl font-bold cursor-pointer">&times;</button>
+      </div>
+      <div class="p-5 space-y-4">
+        <p class="text-xs sm:text-sm text-slate-700">
+          क्या आप टेस्ट सबमिट करना चाहते हैं? सबमिट करने के बाद रिज़ल्ट कार्ड और Textbook Solutions खुल जाएंगे।
+        </p>
+        <div class="overflow-x-auto border border-slate-300 rounded-lg">
+          <table class="w-full text-xs text-center border-collapse">
+            <thead>
+              <tr class="bg-slate-100 font-bold border-b border-slate-300">
+                <th class="p-2 text-left">Section</th>
+                <th class="p-2">Total</th>
+                <th class="p-2 text-emerald-700">Ans</th>
+                <th class="p-2 text-rose-600">Not Ans</th>
+                <th class="p-2 text-purple-700">Marked</th>
+              </tr>
+            </thead>
+            <tbody id="submit-modal-tbody" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+        <div class="flex justify-end gap-2.5">
+          <button type="button" onclick="closeSubmitModal()" class="px-4 py-2 rounded-lg border border-slate-300 bg-slate-100 text-slate-800 text-xs sm:text-sm font-bold cursor-pointer">
+            Cancel
+          </button>
+          <button type="button" onclick="finalizeSubmitTest()" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-extrabold shadow cursor-pointer">
+            हाँ, सबमिट करें (Submit)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       JAVASCRIPT: PWA ENGINE, STORAGE, PARSERS & TCS iON CBT CORE
+  ====================================================================== -->
+  <script>
+    // =========================================================================
+    // 1. DYNAMIC PWA MANIFEST & SERVICE WORKER (FOR NATIVE MOBILE INSTALL)
+    // =========================================================================
+    let deferredInstallPrompt = null;
+
+    (function initDynamicPwa() {
+      try {
+        // Generate SVG App Icon Data URI
+        const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#1e3a8a"/><rect x="44" y="44" width="424" height="424" rx="84" fill="#fbbf24"/><text x="256" y="315" font-family="Arial, sans-serif" font-weight="900" font-size="210" text-anchor="middle" fill="#0f172a">ST</text></svg>`;
+        const iconUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgIcon);
+
+        const manifestObj = {
+          name: "Saurabh Test App",
+          short_name: "Saurabh Test",
+          description: "Personal TCS iON CBT Mock Test Generator & Revision App",
+          start_url: "./",
+          display: "standalone",
+          background_color: "#1e3a8a",
+          theme_color: "#1e3a8a",
+          icons: [
+            { src: iconUrl, sizes: "192x192", type: "image/svg+xml" },
+            { src: iconUrl, sizes: "512x512", type: "image/svg+xml" }
+          ]
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: "application/manifest+json" });
+        const manifestLink = document.createElement("link");
+        manifestLink.rel = "manifest";
+        manifestLink.href = URL.createObjectURL(manifestBlob);
+        document.head.appendChild(manifestLink);
+
+        // Register lightweight offline Service Worker via Blob if supported
+        if ("serviceWorker" in navigator && (window.location.protocol === "https:" || window.location.protocol === "http:")) {
+          const swCode = `
+            self.addEventListener('install', e => self.skipWaiting());
+            self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+            self.addEventListener('fetch', e => {
+              e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+            });
+          `;
+          const swBlob = new Blob([swCode], { type: "application/javascript" });
+          navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+        }
+      } catch (e) {
+        // Safe fallback in sandboxed previews
+      }
+    })();
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const btn = document.getElementById("pwa-install-btn");
+      if (btn) btn.classList.remove("hidden");
+    });
+
+    async function triggerPwaInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const { outcome } = await deferredInstallPrompt.userChoice;
+        if (outcome === "accepted") {
+          showToast("Saurabh Test App इंस्टॉल हो रहा है!", "📲");
+          document.getElementById("pwa-install-btn").classList.add("hidden");
+        }
+        deferredInstallPrompt = null;
+      } else {
+        showToast("Chrome मेनू (⋮) → 'Add to Home screen' पर टैप करके इंस्टॉल करें।", "📲");
+      }
+    }
+
+    // =========================================================================
+    // 2. LOCALSTORAGE PERSISTENCE (SAVED TESTS & ATTEMPT ANALYTICS)
+    // =========================================================================
+    const STORAGE_TESTS_KEY = "saurabh_test_app_saved_tests_v1";
+    const STORAGE_ATTEMPTS_KEY = "saurabh_test_app_attempts_v1";
+    const OPTION_E_LABEL = "इनमें से कोई नहीं (None of the above)";
+
+    function getSavedTests() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_TESTS_KEY) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setSavedTests(list) {
+      localStorage.setItem(STORAGE_TESTS_KEY, JSON.stringify(list));
+      refreshHomeAndLibrary();
+    }
+
+    function getAttemptHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_ATTEMPTS_KEY) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setAttemptHistory(list) {
+      localStorage.setItem(STORAGE_ATTEMPTS_KEY, JSON.stringify(list));
+      refreshHomeAndLibrary();
+    }
+
+    // =========================================================================
+    // 3. APP NAVIGATION & HOME DASHBOARD RENDERING
+    // =========================================================================
+    function navigateAppTab(tab) {
+      ["home", "create", "saved", "analytics"].forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        const navBtn = document.getElementById(`nav-btn-${t}`);
+        if (t === tab) {
+          view.classList.remove("hidden");
+          navBtn.className = "flex flex-col items-center justify-center gap-0.5 text-[#1e3a8a] font-extrabold text-[11px] border-t-2 border-[#1e3a8a] cursor-pointer";
+        } else {
+          view.classList.add("hidden");
+          navBtn.className = "flex flex-col items-center justify-center gap-0.5 text-slate-500 font-semibold text-[11px] border-t-2 border-transparent cursor-pointer";
+        }
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      refreshHomeAndLibrary();
+    }
+
+    function startBlankTestWithPattern(patternType) {
+      navigateAppTab("create");
+      const radio = document.querySelector(`input[name="exam-pattern"][value="${patternType}"]`);
+      if (radio) {
+        radio.checked = true;
+        handlePatternChange(patternType);
+      }
+    }
+
+    function refreshHomeAndLibrary() {
+      const tests = getSavedTests();
+      const attempts = getAttemptHistory();
+
+      // Update Home KPIs
+      document.getElementById("home-stat-created").textContent = tests.length;
+      document.getElementById("home-stat-attempts").textContent = attempts.length;
+
+      if (attempts.length > 0) {
+        const sumAcc = attempts.reduce((acc, item) => acc + parseFloat(item.accuracy || 0), 0);
+        document.getElementById("home-stat-accuracy").textContent = `${(sumAcc / attempts.length).toFixed(1)}%`;
+      } else {
+        document.getElementById("home-stat-accuracy").textContent = "0%";
+      }
+
+      // Render Recent Tests on Home
+      const homeList = document.getElementById("home-recent-tests-list");
+      homeList.innerHTML = "";
+      if (tests.length === 0) {
+        homeList.innerHTML = `
+          <div class="text-center py-6 bg-slate-50 rounded-xl border border-dashed border-slate-300 space-y-2">
+            <p class="text-xs sm:text-sm font-semibold text-slate-600">अभी तक कोई टेस्ट सेव नहीं है।</p>
+            <button type="button" onclick="navigateAppTab('create')" class="bg-blue-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg cursor-pointer">
+              + पहला टेस्ट बनाएं
+            </button>
+          </div>
+        `;
+      } else {
+        tests.slice(0, 3).forEach(t => {
+          const item = document.createElement("div");
+          item.className = "flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-blue-50/50 transition";
+          item.innerHTML = `
+            <div class="min-w-0">
+              <div class="font-bold text-xs sm:text-sm text-slate-900 truncate">${t.title}</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">
+                ${t.questions.length} Qs • ${t.pattern === 'upsssc' ? '5-Option (UPSSSC)' : '4-Option'} • ${t.durationMinutes} Min
+              </div>
+            </div>
+            <button type="button" onclick="launchSavedTestById('${t.id}')"
+              class="bg-[#1e3a8a] hover:bg-blue-800 text-white text-xs font-bold px-3.5 py-2 rounded-lg shrink-0 cursor-pointer">
+              ▶ Start
+            </button>
+          `;
+          homeList.appendChild(item);
+        });
+      }
+
+      // Render Full Saved Tests Library
+      const savedContainer = document.getElementById("saved-tests-container");
+      savedContainer.innerHTML = "";
+      if (tests.length === 0) {
+        savedContainer.innerHTML = `
+          <div class="col-span-full bg-white rounded-2xl p-8 text-center border border-slate-200 text-slate-500 text-sm">
+            आपकी लाइब्रेरी खाली है। <strong>Create Test</strong> टैब से नया मॉक टेस्ट बनाएं।
+          </div>
+        `;
+      } else {
+        tests.forEach(t => {
+          const card = document.createElement("div");
+          card.className = "bg-white rounded-2xl p-4 shadow-xs border border-slate-200 flex flex-col justify-between gap-3";
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${t.pattern === 'upsssc' ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900'}">
+                  ${t.pattern === 'upsssc' ? 'UPSSSC 5-Option' : '4-Option Pattern'}
+                </span>
+                <span class="text-[11px] text-slate-400">${t.createdAt}</span>
+              </div>
+              <h3 class="font-extrabold text-sm sm:text-base text-slate-900 leading-snug">${t.title}</h3>
+              <p class="text-xs text-slate-500 mt-1">
+                प्रश्नों की संख्या: <strong>${t.questions.length}</strong> • समय: <strong>${t.durationMinutes} मिनट</strong> • Marking: +${t.posMark}/-${t.negMark}
+              </p>
+            </div>
+            <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+              <button type="button" onclick="launchSavedTestById('${t.id}')"
+                class="flex-1 bg-[#1e3a8a] hover:bg-blue-800 text-white font-bold text-xs py-2 rounded-lg cursor-pointer">
+                ▶ Attempt CBT Test
+              </button>
+              <button type="button" onclick="deleteSavedTestById('${t.id}')"
+                class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-xs px-3 py-2 rounded-lg cursor-pointer">
+                🗑️
+              </button>
+            </div>
+          `;
+          savedContainer.appendChild(card);
+        });
+      }
+
+      // Render Analytics History
+      const histContainer = document.getElementById("analytics-history-list");
+      histContainer.innerHTML = "";
+      if (attempts.length === 0) {
+        histContainer.innerHTML = `
+          <div class="bg-white rounded-2xl p-8 text-center border border-slate-200 text-slate-500 text-sm">
+            अभी तक कोई मॉक टेस्ट सबमिट नहीं किया गया है।
+          </div>
+        `;
+      } else {
+        attempts.forEach(a => {
+          const row = document.createElement("div");
+          row.className = "bg-white rounded-2xl p-4 shadow-xs border border-slate-200 flex flex-wrap items-center justify-between gap-3";
+          row.innerHTML = `
+            <div class="min-w-0">
+              <div class="font-extrabold text-sm text-slate-900 truncate">${a.title}</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">${a.date} • Time: ${a.timeTaken}</div>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <div class="bg-blue-50 text-blue-800 px-2.5 py-1 rounded-lg font-extrabold">
+                Score: ${a.score}/${a.maxScore}
+              </div>
+              <div class="bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-lg font-extrabold">
+                Acc: ${a.accuracy}%
+              </div>
+            </div>
+          `;
+          histContainer.appendChild(row);
+        });
+      }
+    }
+
+    function deleteSavedTestById(id) {
+      const updated = getSavedTests().filter(t => t.id !== id);
+      setSavedTests(updated);
+      showToast("टेस्ट डिलीट कर दिया गया।", "🗑️");
+    }
+
+    function clearAttemptHistory() {
+      setAttemptHistory([]);
+      showToast("प्रदर्शन इतिहास साफ़ कर दिया गया।", "🧹");
+    }
+
+    // =========================================================================
+    // 4. CREATE TEST ENGINE (YOUTUBE URL EXTRACTION, PATTERN, BUILDERS)
+    // =========================================================================
+    let selectedPattern = "upsssc"; // 'upsssc' (5 options) or 'other' (4 options)
+    let draftQuestions = [];
+
+    function extractYouTubeId(url) {
+      if (!url) return null;
+      const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+      const match = url.trim().match(regExp);
+      return match ? match[1] : null;
+    }
+
+    const ytUrlInput = document.getElementById("yt-url-input");
+    ytUrlInput.addEventListener("input", handleYtUrlInput);
+
+    function handleYtUrlInput() {
+      const val = ytUrlInput.value.trim();
+      const vidId = extractYouTubeId(val);
+      const thumbImg = document.getElementById("yt-preview-thumb");
+      const badge = document.getElementById("yt-preview-badge");
+      const status = document.getElementById("yt-id-status");
+
+      if (vidId) {
+        thumbImg.src = `https://img.youtube.com/vi/${vidId}/hqdefault.jpg`;
+        badge.textContent = `ID: ${vidId}`;
+        badge.className = "absolute top-2 right-2 bg-emerald-600 text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded shadow";
+        status.className = "text-[11px] text-emerald-700 font-semibold mt-1";
+        status.textContent = `✔ YouTube Video ID पहचानी गई: ${vidId}`;
+      } else if (!val) {
+        thumbImg.src = "https://placehold.co/640x360/1e293b/94a3b8?text=Paste+YouTube+Link+Above";
+        badge.textContent = "NO VIDEO LINK";
+        badge.className = "absolute top-2 right-2 bg-black/75 text-slate-200 font-mono text-[10px] px-2 py-0.5 rounded";
+        status.className = "text-[11px] text-slate-500 mt-1";
+        status.textContent = "ℹ️ लिंक पेस्ट करते ही वीडियो थंबनेल और ID अपने आप पहचान ली जाएगी।";
+      } else {
+        thumbImg.src = "https://placehold.co/640x360/1e293b/fbbf24?text=Custom+Link+Detected";
+        badge.textContent = "CUSTOM LINK";
+        status.className = "text-[11px] text-amber-700 font-semibold mt-1";
+        status.textContent = "⚠️ कस्टम लिंक जोड़ा गया।";
+      }
+    }
+
+    function clearUrlInput() {
+      ytUrlInput.value = "";
+      handleYtUrlInput();
+    }
+
+    async function pasteLinkFromClipboard() {
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            ytUrlInput.value = text;
+            handleYtUrlInput();
+            showToast("लिंक पेस्ट कर दिया गया!", "✅");
+            return;
+          }
+        }
+      } catch (e) {}
+      ytUrlInput.focus();
+      showToast("कृपया बॉक्स में Ctrl+V या Long-Press करके लिंक पेस्ट करें।", "📋");
+    }
+
+    function handlePatternChange(mode) {
+      selectedPattern = mode;
+      const cardU = document.getElementById("radio-card-upsssc");
+      const cardO = document.getElementById("radio-card-other");
+      const pill = document.getElementById("pattern-active-pill");
+      const optESelect = document.getElementById("man-opt-e-select");
+
+      if (mode === "upsssc") {
+        cardU.className = "flex items-center gap-3 p-3 rounded-xl border-2 border-blue-600 bg-blue-50/60 cursor-pointer";
+        cardO.className = "flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 bg-white cursor-pointer";
+        pill.textContent = "UPSSSC Mode: 5 Options (A–E)";
+        pill.className = "text-[11px] font-bold bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full border border-amber-300";
+        if (optESelect) optESelect.classList.remove("hidden");
+      } else {
+        cardO.className = "flex items-center gap-3 p-3 rounded-xl border-2 border-emerald-600 bg-emerald-50/60 cursor-pointer";
+        cardU.className = "flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 bg-white cursor-pointer";
+        pill.textContent = "Other Exams Mode: 4 Options (A–D)";
+        pill.className = "text-[11px] font-bold bg-emerald-100 text-emerald-900 px-2.5 py-0.5 rounded-full border border-emerald-300";
+        if (optESelect) optESelect.classList.add("hidden");
+        if (document.getElementById("man-correct").value === "4") {
+          document.getElementById("man-correct").value = "0";
+        }
+      }
+    }
+
+    function switchBuilderTab(tab) {
+      ["json", "transcript", "manual"].forEach(t => {
+        const btn = document.getElementById(`btab-${t}`);
+        const panel = document.getElementById(`bpanel-${t}`);
+        if (t === tab) {
+          btn.className = "px-3 py-1.5 rounded-lg bg-[#1e3a8a] text-white cursor-pointer transition";
+          panel.classList.remove("hidden");
+        } else {
+          btn.className = "px-3 py-1.5 rounded-lg bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 cursor-pointer transition";
+          panel.classList.add("hidden");
+        }
+      });
+    }
+
+    // Dynamic 1-Click Gemini Master Prompt (Adapts to 5-Option UPSSSC or 4-Option Other)
+    function copyDynamicMasterPrompt() {
+      const linkVal = ytUrlInput.value.trim() || "[यहाँ YouTube वीडियो लिंक पेस्ट करें]";
+      const isUpsssc = selectedPattern === "upsssc";
+
+      const optionRule = isUpsssc
+        ? `1. हर प्रश्न में पूरे 5 विकल्प दें: A, B, C, D और E: "इनमें से कोई नहीं (None of the above)"। लगभग 20% प्रश्नों में सही उत्तर विकल्प E (index 4) रखें।`
+        : `1. हर प्रश्न में मानक 4 विकल्प दें: A, B, C और D।`;
+
+      const optionsSchema = isUpsssc
+        ? `["संतुलित विकल्प A", "संतुलित विकल्प B", "संतुलित विकल्प C", "संतुलित विकल्प D", "इनमें से कोई नहीं (None of the above)"]`
+        : `["संतुलित विकल्प A", "संतुलित विकल्प B", "संतुलित विकल्प C", "संतुलित विकल्प D"]`;
+
+      const promptText = `इस YouTube वीडियो (${linkVal}) में पढ़ाए गए सभी प्रश्नों को निकालकर नीचे दिए गए सटीक JSON फ़ॉर्मेट में बदलें (भाषा: हिंदी/Hinglish रखें, केवल शुद्ध JSON array आउटपुट दें):
+
+कठोर नियम (Strict Rules):
+${optionRule}
+2. Zero-Hint विकल्प: सभी विकल्पों की लंबाई और भाषा एक समान रखें ताकि देखकर सही उत्तर का अंदाज़ा न लगे।
+3. हर प्रश्न में Textbook-Style समाधान के लिए 4 फ़ील्ड दें: coreExplanation (मुख्य अवधारणा), examFacts (महत्वपूर्ण अनुच्छेद/फुल फॉर्म/वर्ष), relatedQuestions (इस टॉपिक से आगे-पीछे बनने वाले 2-3 संभावित प्रश्न), और stickyNote (1-लाइनर त्वरित नोट)।
+
+JSON Schema:
+[
+  {
+    "section": "विषय का नाम (जैसे: GK / Computer / Reasoning)",
+    "question": "पूरा प्रश्न यहाँ लिखें?",
+    "options": ${optionsSchema},
+    "correct": 0,
+    "coreExplanation": "स्पष्ट और विस्तृत व्याख्या...",
+    "examFacts": "महत्वपूर्ण परीक्षा तथ्य / अनुच्छेद / फुल फॉर्म...",
+    "relatedQuestions": "• संभावित प्रश्न 1 → उत्तर\\n• संभावित प्रश्न 2 → उत्तर",
+    "stickyNote": "💡 <strong>मुख्य तथ्य:</strong> 1-लाइनर रिवीजन नोट।"
+  }
+]`;
+
+      const tempArea = document.createElement("textarea");
+      tempArea.value = promptText;
+      tempArea.style.position = "fixed";
+      tempArea.style.left = "-9999px";
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand("copy");
+        showToast(`${isUpsssc ? "UPSSSC 5-Option" : "4-Option"} Master Prompt कॉपी हो गया!`, "✨");
+      } catch (e) {
+        showToast("Prompt कॉपी नहीं हो सका।", "⚠️");
+      }
+      document.body.removeChild(tempArea);
+    }
+
+    function normalizeQuestionForPattern(qObj, idx) {
+      let opts = Array.isArray(qObj.options) ? [...qObj.options] : ["विकल्प A", "विकल्प B", "विकल्प C", "विकल्प D"];
+      let corr = typeof qObj.correct === "number" ? qObj.correct : 0;
+
+      if (selectedPattern === "upsssc") {
+        // Ensure 5 options with Option E as "इनमें से कोई नहीं"
+        if (opts.length === 4) {
+          opts.push(OPTION_E_LABEL);
+        } else if (opts.length < 4) {
+          while (opts.length < 4) opts.push(`विकल्प ${opts.length + 1}`);
+          opts.push(OPTION_E_LABEL);
+        } else {
+          opts = opts.slice(0, 5);
+        }
+        if (corr < 0 || corr > 4) corr = 0;
+      } else {
+        // Ensure 4 options
+        opts = opts.slice(0, 4);
+        while (opts.length < 4) opts.push(`विकल्प ${opts.length + 1}`);
+        if (corr < 0 || corr > 3) corr = 0;
+      }
+
+      return {
+        section: qObj.section || "General Studies",
+        question: qObj.question || `Question ${idx + 1}`,
+        options: opts,
+        correct: corr,
+        coreExplanation: qObj.coreExplanation || qObj.explanation || "सही विकल्प ऊपर हरे रंग में दर्शाया गया है।",
+        examFacts: qObj.examFacts || "इस टॉपिक से जुड़े मुख्य तथ्यों को ध्यानपूर्वक याद रखें।",
+        relatedQuestions: qObj.relatedQuestions || `• मुख्य तथ्य: ${opts[corr]}`,
+        stickyNote: qObj.stickyNote || `📌 <strong>Note #${idx + 1}:</strong> ${opts[corr]}`
+      };
+    }
+
+    function importJsonToDraft() {
+      const raw = document.getElementById("json-paste-area").value.trim();
+      if (!raw) {
+        showToast("कृपया JSON बॉक्स में आउटपुट पेस्ट करें।", "⚠️");
+        return;
+      }
+      try {
+        // Clean markdown code fences if pasted accidentally
+        const cleaned = raw.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
+        const parsed = JSON.parse(cleaned);
+        if (!Array.isArray(parsed) || parsed.length === 0) throw new Error("Empty");
+        const normalized = parsed.map((item, idx) => normalizeQuestionForPattern(item, draftQuestions.length + idx));
+        draftQuestions.push(...normalized);
+        document.getElementById("json-paste-area").value = "";
+        renderDraftQuestionsList();
+        showToast(`${normalized.length} प्रश्न सफलतापूर्वक जुड़ गए!`, "✅");
+      } catch (e) {
+        showToast("अमान्य JSON फ़ॉर्मेट! कृपया सही JSON Array पेस्ट करें।", "❌");
+      }
+    }
+
+    function parseNotesToDraft() {
+      const raw = document.getElementById("transcript-paste-area").value.trim();
+      if (!raw) {
+        showToast("कृपया ट्रांसक्रिप्ट या वन-लाइनर नोट्स पेस्ट करें।", "⚠️");
+        return;
+      }
+
+      const lines = raw.split("\n").map(l => l.trim()).filter(Boolean);
+      const distractors = [
+        "उपरोक्त में से कोई भी कथन सत्य नहीं है",
+        "केवल कथन I और II आंशिक रूप से सही हैं",
+        "संबंधित विभाग द्वारा निर्धारित अन्य मानक",
+        "प्रशासनिक एवं वैधानिक प्रावधानों के अंतर्गत अन्य विकल्प"
+      ];
+
+      let added = 0;
+      lines.forEach((line, idx) => {
+        const clean = line.replace(/^(Q\.?\s*\d+[:.)\-]?\s*|\d+[:.)\-]\s*)/i, "").trim();
+        const parts = clean.split(/[:\-–=]/);
+        if (parts.length < 2) return;
+
+        const topic = parts[0].trim();
+        const answer = parts.slice(1).join(" ").trim();
+        const slot = idx % 4;
+        const fourOpts = [distractors[0], distractors[1], distractors[2]];
+        fourOpts.splice(slot, 0, answer);
+
+        const qObj = normalizeQuestionForPattern({
+          section: "Video Notes",
+          question: `'${topic}' के संदर्भ में निम्नलिखित में से कौन-सा विकल्प सही है?`,
+          options: fourOpts,
+          correct: slot,
+          coreExplanation: `'${topic}' का सही उत्तर "${answer}" है।`,
+          examFacts: `परीक्षा उपयोगी तथ्य: ${topic} → ${answer}।`,
+          relatedQuestions: `• ${topic} से संबंधित सही उत्तर क्या है? → ${answer}`,
+          stickyNote: `💡 <strong>${topic}:</strong> ${answer}`
+        }, draftQuestions.length + added);
+
+        draftQuestions.push(qObj);
+        added++;
+      });
+
+      if (added === 0) {
+        showToast("नोट्स से प्रश्न नहीं बन सके। कृपया 'विषय : उत्तर' रूप में लिखें।", "⚠️");
+        return;
+      }
+      document.getElementById("transcript-paste-area").value = "";
+      renderDraftQuestionsList();
+      showToast(`${added} प्रश्न तैयार हो गए!`, "⚡");
+    }
+
+    function addManualQuestionToDraft() {
+      const sec = document.getElementById("man-section").value.trim() || "General Studies";
+      const qText = document.getElementById("man-question").value.trim();
+      const o0 = document.getElementById("man-opt-0").value.trim();
+      const o1 = document.getElementById("man-opt-1").value.trim();
+      const o2 = document.getElementById("man-opt-2").value.trim();
+      const o3 = document.getElementById("man-opt-3").value.trim();
+      const corr = parseInt(document.getElementById("man-correct").value, 10) || 0;
+      const exp = document.getElementById("man-exp").value.trim();
+      const rel = document.getElementById("man-related").value.trim();
+      const sticky = document.getElementById("man-sticky").value.trim();
+
+      if (!qText || !o0 || !o1) {
+        showToast("कृपया प्रश्न और कम से कम Option A व B भरें।", "⚠️");
+        return;
+      }
+
+      const normalized = normalizeQuestionForPattern({
+        section: sec,
+        question: qText,
+        options: [o0, o1, o2 || "विकल्प C", o3 || "विकल्प D"],
+        correct: corr,
+        coreExplanation: exp || "सही उत्तर ऊपर हरे रंग में दर्शाया गया है।",
+        examFacts: "Saurabh Test App — Custom Question Note.",
+        relatedQuestions: rel || `• इस प्रश्न का मुख्य बिंदु: ${[o0, o1, o2, o3, OPTION_E_LABEL][corr]}`,
+        stickyNote: sticky || `📌 <strong>Quick Fact:</strong> ${[o0, o1, o2, o3, OPTION_E_LABEL][corr]}`
+      }, draftQuestions.length);
+
+      draftQuestions.push(normalized);
+
+      ["man-question", "man-opt-0", "man-opt-1", "man-opt-2", "man-opt-3", "man-exp", "man-related", "man-sticky"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+
+      renderDraftQuestionsList();
+      showToast("प्रश्न जुड़ गया!", "✅");
+    }
+
+    function renderDraftQuestionsList() {
+      document.getElementById("draft-count-badge").textContent = draftQuestions.length;
+      const container = document.getElementById("draft-questions-list");
+      container.innerHTML = "";
+
+      if (draftQuestions.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-500 italic py-3 text-center">अभी कोई प्रश्न नहीं जोड़ा गया है।</div>`;
+        return;
+      }
+
+      draftQuestions.forEach((q, idx) => {
+        const row = document.createElement("div");
+        row.className = "bg-white p-2.5 rounded-lg border border-blue-200 flex items-center justify-between gap-2 text-xs";
+        row.innerHTML = `
+          <div class="min-w-0">
+            <span class="font-extrabold text-blue-800">Q.${idx + 1} [${q.section}]:</span>
+            <span class="text-slate-800">${q.question}</span>
+          </div>
+          <button type="button" onclick="removeDraftQuestion(${idx})" class="text-rose-600 font-bold px-2 py-0.5 hover:bg-rose-50 rounded shrink-0 cursor-pointer">
+            ✕
+          </button>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function removeDraftQuestion(idx) {
+      draftQuestions.splice(idx, 1);
+      renderDraftQuestionsList();
+    }
+
+    function clearDraftQuestions() {
+      draftQuestions = [];
+      renderDraftQuestionsList();
+    }
+
+    function resetCreateForm() {
+      clearUrlInput();
+      document.getElementById("test-title-input").value = "";
+      document.getElementById("json-paste-area").value = "";
+      document.getElementById("transcript-paste-area").value = "";
+      clearDraftQuestions();
+      showToast("फ़ॉर्म रीसेट कर दिया गया।", "🧹");
+    }
+
+    // =========================================================================
+    // 5. SAVE & LAUNCH CBT ENGINE
+    // =========================================================================
+    let currentTestObj = null;
+    let remainingSeconds = 0;
+    let timerInterval = null;
+    let currentQIndex = 0;
+    let activeSectionName = "";
+    let userState = [];
+    let isSubmitted = false;
+
+    function saveAndLaunchDraftTest() {
+      if (draftQuestions.length === 0) {
+        showToast("कृपया पहले कम से कम 1 प्रश्न जोड़ें।", "⚠️");
+        return;
+      }
+
+      const vidId = extractYouTubeId(ytUrlInput.value.trim());
+      const defaultTitle = vidId ? `YouTube CBT Mock Test (${vidId})` : `Saurabh CBT Mock Test #${getSavedTests().length + 1}`;
+      const title = document.getElementById("test-title-input").value.trim() || defaultTitle;
+      const durationMinutes = Math.max(1, parseInt(document.getElementById("duration-input").value, 10) || 20);
+      const posMark = parseFloat(document.getElementById("pos-mark-input").value) || 1.0;
+      const negMark = parseFloat(document.getElementById("neg-mark-input").value) || 0;
+
+      const newTest = {
+        id: "test_" + Date.now(),
+        title,
+        videoId: vidId || "",
+        pattern: selectedPattern,
+        durationMinutes,
+        posMark,
+        negMark,
+        createdAt: new Date().toLocaleDateString("hi-IN"),
+        questions: JSON.parse(JSON.stringify(draftQuestions))
+      };
+
+      const tests = getSavedTests();
+      tests.unshift(newTest);
+      setSavedTests(tests);
+
+      // Clear draft after saving
+      clearDraftQuestions();
+      document.getElementById("test-title-input").value = "";
+      clearUrlInput();
+
+      openInstructionsForTest(newTest);
+    }
+
+    function launchSavedTestById(id) {
+      const found = getSavedTests().find(t => t.id === id);
+      if (found) {
+        openInstructionsForTest(found);
+      }
+    }
+
+    function openInstructionsForTest(testObj) {
+      currentTestObj = testObj;
+      document.getElementById("app-shell").classList.add("hidden");
+      document.getElementById("exam-screen").classList.add("hidden");
+      document.getElementById("result-screen").classList.add("hidden");
+      document.getElementById("instruction-screen").classList.remove("hidden");
+      document.getElementById("instruction-screen").classList.add("flex");
+
+      document.getElementById("inst-title").textContent = testObj.title;
+      document.getElementById("inst-subtitle").textContent = `${testObj.questions.length} Questions • ${testObj.durationMinutes} Minutes • Saurabh Test App`;
+
+      const banner = document.getElementById("inst-pattern-banner");
+      banner.innerHTML = testObj.pattern === "upsssc"
+        ? `<strong>UPSSSC 5-Option पैटर्न सक्रिय:</strong> प्रत्येक प्रश्न में 5 विकल्प (A, B, C, D और E: इनमें से कोई नहीं) होंगे। सही उत्तर के लिए <strong>+${testObj.posMark}</strong> और गलत उत्तर के लिए <strong>-${testObj.negMark}</strong> अंक।`
+        : `<strong>4-Option परीक्षा पैटर्न सक्रिय:</strong> प्रत्येक प्रश्न में 4 विकल्प (A, B, C, D) होंगे। सही उत्तर के लिए <strong>+${testObj.posMark}</strong> और गलत उत्तर के लिए <strong>-${testObj.negMark}</strong> अंक।`;
+
+      const tbody = document.getElementById("inst-table-body");
+      tbody.innerHTML = "";
+      const sections = [...new Set(testObj.questions.map(q => q.section))];
+      sections.forEach(sec => {
+        const cnt = testObj.questions.filter(q => q.section === sec).length;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="p-2.5 border-r border-slate-300 font-bold">${sec}</td>
+          <td class="p-2.5 border-r border-slate-300 text-center font-bold">${cnt}</td>
+          <td class="p-2.5 border-r border-slate-300 text-center">${(cnt * testObj.posMark).toFixed(2)}</td>
+          <td class="p-2.5 text-center text-rose-600 font-semibold">-${testObj.negMark.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function confirmBeginCbt() {
+      const cb = document.getElementById("inst-declare-cb");
+      const warn = document.getElementById("inst-warn-msg");
+      if (!cb.checked) {
+        warn.classList.remove("hidden");
+        return;
+      }
+      warn.classList.add("hidden");
+      startCbtSession();
+    }
+
+    function startCbtSession() {
+      isSubmitted = false;
+      remainingSeconds = currentTestObj.durationMinutes * 60;
+      currentQIndex = 0;
+
+      userState = currentTestObj.questions.map(() => ({
+        selectedOption: null,
+        status: "not-visited"
+      }));
+      userState[0].status = "not-answered";
+      activeSectionName = currentTestObj.questions[0].section;
+
+      document.getElementById("cbt-exam-title").textContent = currentTestObj.title;
+      document.getElementById("cbt-pos-badge").textContent = `+${currentTestObj.posMark}`;
+      document.getElementById("cbt-neg-badge").textContent = `-${currentTestObj.negMark}`;
+      document.getElementById("cbt-q-pos").textContent = `+${currentTestObj.posMark.toFixed(2)}`;
+      document.getElementById("cbt-q-neg").textContent = `-${currentTestObj.negMark.toFixed(2)}`;
+
+      document.getElementById("instruction-screen").classList.add("hidden");
+      document.getElementById("instruction-screen").classList.remove("flex");
+      document.getElementById("result-screen").classList.add("hidden");
+      document.getElementById("result-screen").classList.remove("flex");
+      document.getElementById("exam-screen").classList.remove("hidden");
+      document.getElementById("exam-screen").classList.add("flex");
+
+      renderCbtQuestion(0);
+      startCbtTimer();
+    }
+
+    function startCbtTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      updateCbtTimerUI();
+      timerInterval = setInterval(() => {
+        if (isSubmitted) {
+          clearInterval(timerInterval);
+          return;
+        }
+        remainingSeconds--;
+        updateCbtTimerUI();
+        if (remainingSeconds <= 0) {
+          clearInterval(timerInterval);
+          finalizeSubmitTest();
+        }
+      }, 1000);
+    }
+
+    function updateCbtTimerUI() {
+      const m = Math.floor(Math.max(0, remainingSeconds) / 60);
+      const s = Math.max(0, remainingSeconds) % 60;
+      const box = document.getElementById("cbt-timer-box");
+      box.textContent = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+      if (remainingSeconds <= 120) {
+        box.className = "bg-slate-900 text-rose-400 font-mono font-extrabold text-sm sm:text-base px-3 py-1 rounded border border-rose-500 tracking-wider animate-pulse";
+      } else {
+        box.className = "bg-slate-900 text-emerald-400 font-mono font-extrabold text-sm sm:text-base px-3 py-1 rounded border border-slate-600 tracking-wider";
+      }
+    }
+
+    function renderCbtSectionTabs() {
+      const box = document.getElementById("cbt-section-tabs");
+      box.innerHTML = "";
+      const sections = [...new Set(currentTestObj.questions.map(q => q.section))];
+
+      sections.forEach(sec => {
+        const indices = currentTestObj.questions.map((q, i) => (q.section === sec ? i : -1)).filter(i => i !== -1);
+        const ansCount = indices.filter(i => userState[i].status === "answered" || userState[i].status === "answered-marked").length;
+        const active = sec === activeSectionName;
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = active
+          ? "px-3 py-1.5 rounded-t text-xs sm:text-sm font-bold flex items-center gap-1.5 bg-white text-[#1e3a8a] shadow shrink-0 cursor-pointer"
+          : "px-3 py-1.5 rounded-t text-xs sm:text-sm font-bold flex items-center gap-1.5 bg-[#1e3a8a] text-blue-100 hover:bg-blue-800 shrink-0 cursor-pointer";
+        btn.innerHTML = `<span>${sec}</span><span class="text-[10px] px-1.5 py-0.5 rounded-full ${active ? 'bg-blue-100 text-blue-900' : 'bg-blue-950 text-blue-200'}">${ansCount}/${indices.length}</span>`;
+        btn.onclick = () => {
+          if (sec !== activeSectionName) goToCbtQuestion(indices[0]);
+        };
+        box.appendChild(btn);
+      });
+    }
+
+    function goToCbtQuestion(idx) {
+      if (userState[idx].status === "not-visited") {
+        userState[idx].status = "not-answered";
+      }
+      currentQIndex = idx;
+      activeSectionName = currentTestObj.questions[idx].section;
+      renderCbtQuestion(idx);
+    }
+
+    function renderCbtQuestion(idx) {
+      const q = currentTestObj.questions[idx];
+      const st = userState[idx];
+      activeSectionName = q.section;
+
+      renderCbtSectionTabs();
+
+      document.getElementById("cbt-q-num").textContent = `Question No. ${idx + 1} of ${currentTestObj.questions.length}`;
+      document.getElementById("cbt-q-sec").textContent = q.section;
+      document.getElementById("cbt-q-text").textContent = q.question;
+
+      const optBox = document.getElementById("cbt-options-box");
+      optBox.innerHTML = "";
+      const letters = ["A", "B", "C", "D", "E"];
+
+      q.options.forEach((optText, optIdx) => {
+        const checked = st.selectedOption === optIdx;
+        const isE = optIdx === 4;
+
+        const label = document.createElement("label");
+        label.className = `flex items-start gap-3 p-3 sm:p-3.5 rounded-xl border-2 cursor-pointer transition ${
+          checked
+            ? "border-[#0284c7] bg-sky-50 shadow-xs"
+            : isE
+              ? "border-amber-200 bg-amber-50/30 hover:border-amber-400"
+              : "border-slate-200 bg-white hover:border-blue-300"
+        }`;
+        label.innerHTML = `
+          <input type="radio" name="cbt-opt" ${checked ? "checked" : ""} class="mt-1 w-4 h-4 accent-[#0284c7] shrink-0" />
+          <span class="font-extrabold text-xs px-2 py-0.5 rounded shrink-0 ${checked ? 'bg-[#0284c7] text-white' : (isE ? 'bg-amber-200 text-amber-950' : 'bg-slate-200 text-slate-700')}">${letters[optIdx]}</span>
+          <span class="text-sm sm:text-base font-medium text-slate-800">${optText}</span>
+        `;
+        label.onclick = () => {
+          userState[currentQIndex].selectedOption = optIdx;
+          renderCbtQuestion(currentQIndex);
+        };
+        optBox.appendChild(label);
+      });
+
+      document.getElementById("cbt-prev-btn").disabled = idx === 0;
+      renderCbtPalette();
+    }
+
+    function clearResponse() {
+      userState[currentQIndex].selectedOption = null;
+      userState[currentQIndex].status = "not-answered";
+      renderCbtQuestion(currentQIndex);
+    }
+
+    function saveAndNext() {
+      const st = userState[currentQIndex];
+      st.status = st.selectedOption !== null ? "answered" : "not-answered";
+      goToCbtQuestion((currentQIndex + 1) % currentTestObj.questions.length);
+    }
+
+    function markForReviewAndNext() {
+      const st = userState[currentQIndex];
+      st.status = st.selectedOption !== null ? "answered-marked" : "marked";
+      goToCbtQuestion((currentQIndex + 1) % currentTestObj.questions.length);
+    }
+
+    function prevQuestion() {
+      if (currentQIndex > 0) goToCbtQuestion(currentQIndex - 1);
+    }
+
+    function renderCbtPalette() {
+      let ans = 0, notAns = 0, notVis = 0, mrk = 0, ansMrk = 0;
+      userState.forEach(s => {
+        if (s.status === "answered") ans++;
+        else if (s.status === "not-answered") notAns++;
+        else if (s.status === "not-visited") notVis++;
+        else if (s.status === "marked") mrk++;
+        else if (s.status === "answered-marked") ansMrk++;
+      });
+
+      document.getElementById("pal-cnt-ans").textContent = ans;
+      document.getElementById("pal-cnt-notans").textContent = notAns;
+      document.getElementById("pal-cnt-notvis").textContent = notVis;
+      document.getElementById("pal-cnt-mrk").textContent = mrk;
+      document.getElementById("pal-cnt-ansmrk").textContent = ansMrk;
+      document.getElementById("pal-sec-header").textContent = activeSectionName;
+
+      const grid = document.getElementById("cbt-palette-grid");
+      grid.innerHTML = "";
+      currentTestObj.questions.forEach((q, idx) => {
+        if (q.section !== activeSectionName) return;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = idx + 1;
+        btn.className = `tcs-btn-shape status-${userState[idx].status} ${idx === currentQIndex ? "active-q-ring" : ""}`;
+        btn.onclick = () => {
+          goToCbtQuestion(idx);
+          if (window.innerWidth < 1024) toggleMobilePaletteDrawer(false);
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    function toggleMobilePaletteDrawer(forceState) {
+      const sidebar = document.getElementById("cbt-palette-sidebar");
+      if (typeof forceState === "boolean") {
+        sidebar.classList.toggle("hidden", !forceState);
+        sidebar.classList.toggle("flex", forceState);
+      } else {
+        const isHidden = sidebar.classList.contains("hidden");
+        sidebar.classList.toggle("hidden", !isHidden);
+        sidebar.classList.toggle("flex", isHidden);
+      }
+    }
+
+    // =========================================================================
+    // 6. SUBMIT & TEXTBOOK-STYLE SOLUTIONS + STICKY NOTES WALL
+    // =========================================================================
+    function openSubmitModal() {
+      const cur = userState[currentQIndex];
+      if (cur.selectedOption !== null && cur.status === "not-answered") {
+        cur.status = "answered";
+      }
+      renderCbtPalette();
+
+      const tbody = document.getElementById("submit-modal-tbody");
+      tbody.innerHTML = "";
+      const sections = [...new Set(currentTestObj.questions.map(q => q.section))];
+
+      sections.forEach(sec => {
+        let total = 0, ans = 0, notAns = 0, mrk = 0;
+        currentTestObj.questions.forEach((q, i) => {
+          if (q.section !== sec) return;
+          total++;
+          const st = userState[i].status;
+          if (st === "answered" || st === "answered-marked") ans++;
+          else if (st === "marked") mrk++;
+          else notAns++;
+        });
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="p-2 text-left font-bold">${sec}</td>
+          <td class="p-2 font-semibold">${total}</td>
+          <td class="p-2 font-bold text-emerald-700">${ans}</td>
+          <td class="p-2 font-bold text-rose-600">${notAns}</td>
+          <td class="p-2 font-bold text-purple-700">${mrk}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("submit-modal").classList.remove("hidden");
+    }
+
+    function closeSubmitModal() {
+      document.getElementById("submit-modal").classList.add("hidden");
+    }
+
+    function finalizeSubmitTest() {
+      closeSubmitModal();
+      isSubmitted = true;
+      if (timerInterval) clearInterval(timerInterval);
+
+      const cur = userState[currentQIndex];
+      if (cur.selectedOption !== null && (cur.status === "not-answered" || cur.status === "not-visited")) {
+        cur.status = "answered";
+      }
+
+      renderResultAndSolutions();
+    }
+
+    function renderResultAndSolutions() {
+      document.getElementById("exam-screen").classList.add("hidden");
+      document.getElementById("exam-screen").classList.remove("flex");
+      document.getElementById("result-screen").classList.remove("hidden");
+      document.getElementById("result-screen").classList.add("flex");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      document.getElementById("res-title").textContent = currentTestObj.title;
+
+      const totalSec = currentTestObj.durationMinutes * 60;
+      const takenSec = Math.max(1, totalSec - remainingSeconds);
+      const tMin = Math.floor(takenSec / 60);
+      const tSec = takenSec % 60;
+      const timeStr = `${String(tMin).padStart(2, "0")}:${String(tSec).padStart(2, "0")}`;
+
+      document.getElementById("res-time").textContent = timeStr;
+      document.getElementById("res-total-time").textContent = `/ ${String(currentTestObj.durationMinutes).padStart(2, "0")}:00`;
+      document.getElementById("res-avg-time").textContent = `Avg: ${(takenSec / currentTestObj.questions.length).toFixed(1)}s / Q`;
+
+      const sections = [...new Set(currentTestObj.questions.map(q => q.section))];
+      const secStats = {};
+      sections.forEach(s => {
+        secStats[s] = { name: s, total: 0, attempted: 0, correct: 0, wrong: 0, score: 0 };
+      });
+
+      let correctCnt = 0, wrongCnt = 0, skipCnt = 0;
+
+      currentTestObj.questions.forEach((q, i) => {
+        const sel = userState[i].selectedOption;
+        const st = secStats[q.section];
+        st.total++;
+
+        if (sel === null) {
+          skipCnt++;
+        } else {
+          st.attempted++;
+          if (sel === q.correct) {
+            correctCnt++;
+            st.correct++;
+            st.score += currentTestObj.posMark;
+          } else {
+            wrongCnt++;
+            st.wrong++;
+            st.score -= currentTestObj.negMark;
+          }
+        }
+      });
+
+      const attemptedCnt = correctCnt + wrongCnt;
+      const maxScore = currentTestObj.questions.length * currentTestObj.posMark;
+      const finalScore = correctCnt * currentTestObj.posMark - wrongCnt * currentTestObj.negMark;
+      const accuracy = attemptedCnt > 0 ? ((correctCnt / attemptedCnt) * 100).toFixed(1) : "0.0";
+
+      document.getElementById("res-score").textContent = finalScore.toFixed(2);
+      document.getElementById("res-max-score").textContent = `/ ${maxScore.toFixed(2)}`;
+      document.getElementById("res-score-detail").textContent = `+${(correctCnt * currentTestObj.posMark).toFixed(2)} | -${(wrongCnt * currentTestObj.negMark).toFixed(2)}`;
+      document.getElementById("res-accuracy").textContent = `${accuracy}%`;
+      document.getElementById("res-correct").textContent = correctCnt;
+      document.getElementById("res-wrong").textContent = wrongCnt;
+      document.getElementById("res-skip").textContent = skipCnt;
+
+      // Save Attempt to LocalStorage Analytics
+      const attempts = getAttemptHistory();
+      attempts.unshift({
+        title: currentTestObj.title,
+        score: finalScore.toFixed(2),
+        maxScore: maxScore.toFixed(2),
+        accuracy,
+        timeTaken: timeStr,
+        date: new Date().toLocaleString("hi-IN")
+      });
+      setAttemptHistory(attempts);
+
+      // Section Table
+      const tbody = document.getElementById("res-section-tbody");
+      tbody.innerHTML = "";
+      sections.forEach(sec => {
+        const s = secStats[sec];
+        const acc = s.attempted > 0 ? ((s.correct / s.attempted) * 100).toFixed(1) : "0.0";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="p-3 font-bold text-slate-900">${s.name}</td>
+          <td class="p-3 text-center">${s.total}</td>
+          <td class="p-3 text-center">${s.attempted}</td>
+          <td class="p-3 text-center font-bold text-emerald-700">${s.correct}</td>
+          <td class="p-3 text-center font-bold text-rose-700">${s.wrong}</td>
+          <td class="p-3 text-center font-bold">${acc}%</td>
+          <td class="p-3 text-center font-extrabold text-blue-700">${s.score.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      renderTextbookSolutions("all");
+      renderStickyWall();
+    }
+
+    const STICKY_COLORS = [
+      { bg: "bg-amber-100", border: "border-amber-300", text: "text-amber-950" },
+      { bg: "bg-cyan-100", border: "border-cyan-300", text: "text-cyan-950" },
+      { bg: "bg-emerald-100", border: "border-emerald-300", text: "text-emerald-950" },
+      { bg: "bg-pink-100", border: "border-pink-300", text: "text-pink-950" },
+      { bg: "bg-purple-100", border: "border-purple-300", text: "text-purple-950" }
+    ];
+
+    function filterSolutions(type) {
+      document.querySelectorAll(".sol-fbtn").forEach(b => {
+        b.className = b.dataset.filter === type
+          ? "sol-fbtn bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer"
+          : "sol-fbtn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer";
+      });
+      renderTextbookSolutions(type);
+    }
+
+    function renderTextbookSolutions(filterType) {
+      const container = document.getElementById("res-solutions-list");
+      container.innerHTML = "";
+      const letters = ["A", "B", "C", "D", "E"];
+
+      currentTestObj.questions.forEach((q, idx) => {
+        const sel = userState[idx].selectedOption;
+        const status = sel === null ? "unattempted" : (sel === q.correct ? "correct" : "incorrect");
+        if (filterType !== "all" && filterType !== status) return;
+
+        const theme = STICKY_COLORS[idx % STICKY_COLORS.length];
+
+        const badgeHtml = status === "correct"
+          ? `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full text-xs font-extrabold">✅ सही (+${currentTestObj.posMark})</span>`
+          : status === "incorrect"
+            ? `<span class="bg-rose-100 text-rose-800 border border-rose-300 px-2.5 py-0.5 rounded-full text-xs font-extrabold">❌ गलत (-${currentTestObj.negMark})</span>`
+            : `<span class="bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full text-xs font-extrabold">⚪ अनुत्तरित (0)</span>`;
+
+        const optionsHtml = q.options.map((opt, oIdx) => {
+          const isCorr = oIdx === q.correct;
+          const isUserWrong = sel === oIdx && sel !== q.correct;
+          const style = isCorr
+            ? "border-emerald-500 bg-emerald-50 text-emerald-950 font-bold"
+            : isUserWrong
+              ? "border-rose-400 bg-rose-50 text-rose-950 font-semibold"
+              : "border-slate-200 bg-slate-50 text-slate-700";
+
+          const tag = isCorr
+            ? `<span class="ml-auto text-[11px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold">Correct (${letters[oIdx]}) ✓</span>`
+            : isUserWrong
+              ? `<span class="ml-auto text-[11px] bg-rose-600 text-white px-2 py-0.5 rounded font-bold">Your Answer ✗</span>`
+              : "";
+
+          return `
+            <div class="flex items-center gap-2 p-2.5 rounded-xl border ${style} text-xs sm:text-sm">
+              <span class="font-extrabold px-2 py-0.5 rounded bg-white border border-black/10">${letters[oIdx]}</span>
+              <span>${opt}</span>
+              ${tag}
+            </div>
+          `;
+        }).join("");
+
+        const relatedHtml = (q.relatedQuestions || "").split("\n").filter(Boolean).map(l => `<div>${l}</div>`).join("");
+
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-2xl shadow-xs border border-slate-200 p-4 sm:p-5 space-y-4";
+        card.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="bg-[#1e3a8a] text-white font-extrabold text-xs px-2.5 py-1 rounded">Q.${idx + 1}</span>
+              <span class="text-xs font-bold text-slate-500">${q.section}</span>
+            </div>
+            ${badgeHtml}
+          </div>
+
+          <div class="text-sm sm:text-base font-bold text-slate-900 leading-relaxed">${q.question}</div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">${optionsHtml}</div>
+
+          <!-- Textbook Solution + Exam Key Points + Related Qs + Sticky Note -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 pt-2">
+            <div class="lg:col-span-8 space-y-2.5">
+              <div class="bg-blue-50/80 border border-blue-200 rounded-xl p-3.5 text-xs sm:text-sm text-slate-800 leading-relaxed">
+                <div class="font-extrabold text-blue-900 mb-1">📘 विस्तृत अवधारणा (Textbook Explanation):</div>
+                <p>${q.coreExplanation}</p>
+              </div>
+
+              <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 text-xs sm:text-sm text-slate-800">
+                <div class="font-extrabold text-emerald-900 mb-1">🎯 Exam Key Points (महत्वपूर्ण तथ्य / अनुच्छेद / सूत्र):</div>
+                <p>${q.examFacts}</p>
+              </div>
+
+              <div class="bg-purple-50/80 border border-purple-200 rounded-xl p-3 text-xs sm:text-sm text-slate-800 space-y-1">
+                <div class="font-extrabold text-purple-900 mb-1">🔄 आगे-पीछे के संभावित प्रश्न (Expected Related Questions):</div>
+                ${relatedHtml}
+              </div>
+            </div>
+
+            <div class="lg:col-span-4 ${theme.bg} border-2 ${theme.border} rounded-xl p-4 pt-6 relative flex flex-col justify-between">
+              <span class="sticky-pin"></span>
+              <div>
+                <div class="text-[11px] font-extrabold uppercase ${theme.text} mb-1.5 border-b border-black/10 pb-1">
+                  📌 Quick Revision Sticky Note #${idx + 1}
+                </div>
+                <p class="text-xs sm:text-sm text-slate-900 leading-relaxed">${q.stickyNote}</p>
+              </div>
+              <div class="mt-3 pt-1.5 border-t border-black/10 text-[11px] font-extrabold text-slate-700">
+                ✔ Ans: (${letters[q.correct]}) ${q.options[q.correct]}
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderStickyWall() {
+      const wall = document.getElementById("res-sticky-wall");
+      wall.innerHTML = "";
+      const rots = ["-rotate-1", "rotate-1", "rotate-0"];
+      const letters = ["A", "B", "C", "D", "E"];
+
+      currentTestObj.questions.forEach((q, idx) => {
+        const theme = STICKY_COLORS[idx % STICKY_COLORS.length];
+        const card = document.createElement("div");
+        card.className = `sticky-card ${theme.bg} border-2 ${theme.border} rounded-xl p-4 pt-6 ${rots[idx % rots.length]} flex flex-col justify-between`;
+        card.innerHTML = `
+          <span class="sticky-pin"></span>
+          <div>
+            <div class="flex items-center justify-between text-[11px] font-extrabold ${theme.text} mb-2 border-b border-black/10 pb-1">
+              <span>NOTE #${idx + 1}</span>
+              <span>${q.section}</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-900 leading-relaxed">${q.stickyNote}</p>
+          </div>
+          <div class="mt-3 pt-1.5 border-t border-black/10 text-[11px] font-bold text-slate-700">
+            ✔ (${letters[q.correct]}) ${q.options[q.correct]}
+          </div>
+        `;
+        wall.appendChild(card);
+      });
+    }
+
+    function copyAllStickyNotes() {
+      const txt = currentTestObj.questions.map((q, i) => {
+        const clean = q.stickyNote.replace(/<[^>]*>/g, "");
+        return `${i + 1}. [${q.section}] ${clean}`;
+      }).join("\n");
+
+      const area = document.createElement("textarea");
+      area.value = `${currentTestObj.title} — Sticky Notes:\n\n${txt}`;
+      area.style.position = "fixed";
+      area.style.left = "-9999px";
+      document.body.appendChild(area);
+      area.select();
+      try {
+        document.execCommand("copy");
+        showToast("सभी Sticky Notes कॉपी हो गए!", "📋");
+      } catch (e) {}
+      document.body.removeChild(area);
+    }
+
+    function retakeActiveTest() {
+      if (currentTestObj) startCbtSession();
+    }
+
+    function exitToAppShell() {
+      if (timerInterval) clearInterval(timerInterval);
+      document.getElementById("instruction-screen").classList.add("hidden");
+      document.getElementById("instruction-screen").classList.remove("flex");
+      document.getElementById("exam-screen").classList.add("hidden");
+      document.getElementById("exam-screen").classList.remove("flex");
+      document.getElementById("result-screen").classList.add("hidden");
+      document.getElementById("result-screen").classList.remove("flex");
+      document.getElementById("app-shell").classList.remove("hidden");
+      navigateAppTab("home");
+    }
+
+    let toastTimer = null;
+    function showToast(msg, icon = "✅") {
+      const box = document.getElementById("toast-box");
+      document.getElementById("toast-msg").textContent = msg;
+      document.getElementById("toast-icon").textContent = icon;
+      box.classList.remove("hidden");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => box.classList.add("hidden"), 3400);
+    }
+
+    // Initialize clean dashboard
+    refreshHomeAndLibrary();
+  </script>
+</body>
+</html>
